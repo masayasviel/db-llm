@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "drizzle:generate": "npx drizzle-kit generate",
+    "drizzle:migrate": "npx drizzle-kit migrate"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "mysql2": "^3.16.1"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
+  }
+}

@@ -6,16 +6,19 @@ import {
   mysqlTable,
   text,
   timestamp,
-  unique,
   varchar,
 } from 'drizzle-orm/mysql-core';
 
+/** ユーザ */
 export const User = mysqlTable('user', {
   id: int('id').autoincrement().primaryKey(),
+  /** ユーザ名 */
   name: varchar('name', { length: 256 }).notNull(),
+  /** ユーザコード */
   code: varchar('code', { length: 256 }).notNull().unique('uniq_code'),
 });
 
+/** メモ */
 export const Memo = mysqlTable('memo', {
   id: int('id').autoincrement().primaryKey(),
   createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
@@ -26,20 +29,24 @@ export const Memo = mysqlTable('memo', {
   userId: int('user_id')
     .notNull()
     .references(() => User.id, { onDelete: 'cascade' }),
+  /** タイトル */
   title: varchar('title', { length: 256 }).notNull(),
+  /** 内容 */
   content: text('content').notNull(),
 });
 
+/** タグ */
 export const Tag = mysqlTable(
   'tag',
   {
     id: int('id').autoincrement().primaryKey(),
+    /** タグ名 */
     name: varchar('name', { length: 50 }).notNull(),
+    /** 公式タグか */
     isOfficial: boolean('is_official').notNull().default(false),
     userId: int('user_id').references(() => User.id, { onDelete: 'cascade' }),
   },
   (t) => [
-    unique('uniq_tag_name').on(t.name, t.isOfficial, t.userId),
     check(
       'check_tag_owner',
       sql`(
@@ -51,6 +58,7 @@ export const Tag = mysqlTable(
   ],
 );
 
+/** タグ-メモ関連付け */
 export const memoTagRelation = mysqlTable('memo_tag_relation', {
   id: int('id').autoincrement().primaryKey(),
   memoId: int('memo_id')

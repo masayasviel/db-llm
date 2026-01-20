@@ -16,6 +16,12 @@ npm run drizzle:generate
 npm run drizzle:migrate
 ```
 
+## fixture
+
+```shell
+npx ts-node ./src/load-fixture.ts
+```
+
 ### php my admin
 
 `http://localhost:8080`

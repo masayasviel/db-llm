@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "山田太郎",
+    "code": "taro_yamada"
+  },
+  {
+    "id": 2,
+    "name": "佐藤花子",
+    "code": "hanako_sato"
+  },
+  {
+    "id": 3,
+    "name": "田中次郎",
+    "code": "jiro_tanaka"
+  }
+]

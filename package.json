@@ -6,9 +6,11 @@
   "dependencies": {
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
-    "mysql2": "^3.16.1"
+    "mysql2": "^3.16.1",
+    "remeda": "^2.33.4"
   },
   "devDependencies": {
+    "@types/node": "^25.0.9",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0"
   }

@@ -28,6 +28,12 @@ docker-compose run web python manage.py makemigrations defaultdb
 docker-compose run web python manage.py migrate
 ```
 
+### commands
+
+```sh
+docker-compose run web python manage.py model_to_document
+```
+
 ### php my admin
 
 `http://localhost:8080`

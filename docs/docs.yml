@@ -1,0 +1,380 @@
+- name: group
+  doc:
+    title: グループ
+    description: ユーザをまとめるグループ
+    context:
+      - 階層構造を取る
+      - 階層の深さに制限はない
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: name
+      type: CharField
+      verbose_name: グループ名
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: true
+      primary_key: false
+      relation: null
+      index: false
+    - name: parent
+      type: ForeignKey
+      verbose_name: 親グループ
+      help_text: null
+      is_null: true
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Group
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields: !!python/tuple
+        - name
+      name: group_name_uniq
+  index: []
+- name: user
+  doc:
+    title: ユーザ-
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: name
+      type: CharField
+      verbose_name: ユーザー名
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: code
+      type: CharField
+      verbose_name: ユーザーユニークコード
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: true
+      primary_key: false
+      relation: null
+      index: false
+  constraints: []
+  index: []
+- name: group_user_relation
+  doc:
+    title: ユーザ-とグループの紐付け
+    context: ユーザーは複数グループに所属できる
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: group
+      type: ForeignKey
+      verbose_name: group
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Group
+      index: true
+    - name: user
+      type: ForeignKey
+      verbose_name: user
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+  constraints: []
+  index: []
+- name: tag
+  doc:
+    title: タグ
+    description: 記事やユーザーなどにタグをつけることができる
+    context:
+      - 公式タグフラグがtrueなら、サービス提供者が用意したタグであることを示す
+      - タグはユーザーが任意に作成でき、それを他ユーザーが利用できる
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: created_by
+      type: ForeignKey
+      verbose_name: created by
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+    - name: name
+      type: CharField
+      verbose_name: タグ名
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: true
+      primary_key: false
+      relation: null
+      index: false
+    - name: is_official
+      type: BooleanField
+      verbose_name: 公式タグフラグ
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+  constraints: []
+  index: []
+- name: user_tag_relation
+  doc:
+    title: ユーザ-とタグの紐付け
+    context:
+      - ユーザーのタグフォロー状況
+      - フォローを外せばレコードが削除される
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: user
+      type: ForeignKey
+      verbose_name: user
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+    - name: tag
+      type: ForeignKey
+      verbose_name: tag
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Tag
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields: !!python/tuple
+        - user
+        - tag
+      name: user_and_tag_uniq
+  index:
+    - name: user_tag_re_user_id_5d706d_idx
+      fields:
+        - user
+        - tag
+- name: article
+  doc:
+    title: 記事
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: updated_at
+      type: DateTimeField
+      verbose_name: updated at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: title
+      type: CharField
+      verbose_name: 記事タイトル
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: true
+    - name: article_path
+      type: TextField
+      verbose_name: 記事実態の保存先パス
+      help_text: 記事の内容と記事内のメディアはそこに保存される
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: user
+      type: ForeignKey
+      verbose_name: 記事の作成者
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields: !!python/tuple
+        - user
+        - title
+      name: article_title_and_user_uniq
+  index: []
+- name: article_tag_relation
+  doc:
+    title: 記事へのタグ付け
+    context:
+      - ユーザーが記事にタグ付けできる
+      - タグを外せばレコードが削除される
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: created_by
+      type: ForeignKey
+      verbose_name: タグの付与者
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+    - name: article
+      type: ForeignKey
+      verbose_name: article
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Article
+      index: true
+    - name: tag
+      type: ForeignKey
+      verbose_name: tag
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Tag
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields: !!python/tuple
+        - article
+        - tag
+      name: article_and_tag_uniq
+  index: []

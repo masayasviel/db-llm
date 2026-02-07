@@ -1,35 +1,41 @@
-# drizzle-llm
+# DB LLM
 
-## init
+## venv
 
-```shell
-npm i
+```sh
+make venv
 ```
 
-## db
+### activate
+
+```sh
+source .venv/bin/activate
+deactivate
+```
+
+## Docker
 
 ```shell
-docker-compose up -d
-# generate migrate file
-npm run drizzle:generate
+make up
+```
+
+### migrate
+
+```sh
+# create migrate file
+docker-compose run web python manage.py makemigrations defaultdb
 # migrate
-npm run drizzle:migrate
+docker-compose run web python manage.py migrate
 ```
 
 ### php my admin
 
 `http://localhost:8080`
 
-## fixture
+### down
 
 ```shell
-npx ts-node ./src/load-fixture.ts
-```
-
-## docker
-
-```shell
-docker-compose down
-docker-compose down -v
+make down
+make down_volume
 docker images -qa | xargs docker rmi
 ```

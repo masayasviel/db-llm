@@ -8,7 +8,7 @@ from docutils import nodes
 from docutils.core import publish_doctree
 
 
-class Dumper(yaml.Dumper):
+class Dumper(yaml.SafeDumper):
     def increase_indent(self, flow=False, *args, **kwargs):
         return super().increase_indent(flow=flow, indentless=False)
 
@@ -53,12 +53,12 @@ class Command(BaseCommand):
                     "constraints": [
                         {
                             "type": c.__class__.__name__,
-                            "fields": getattr(c, "fields", None),
+                            "fields": list(getattr(c, "fields", None) or []),
                             "name": c.name,
                         }
                         for c in meta.constraints
                     ],
-                    "index": [{"name": idx.name, "fields": idx.fields} for idx in meta.indexes],
+                    "index": [{"name": idx.name, "fields": list(idx.fields or [])} for idx in meta.indexes],
                 }
             )
 

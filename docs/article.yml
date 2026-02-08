@@ -9,15 +9,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: updated_at
       type: DateTimeField
       verbose_name: 更新日時
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -25,14 +22,13 @@
       type: CharField
       verbose_name: イベント名
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
     - name: type
       type: CharField
       choices:
-        - value: OFFCIAL
+        - value: OFFICIAL
           label: 公式
         - value: CLIENT
           label: 企業
@@ -40,7 +36,6 @@
           label: グループ
       verbose_name: キャンペーンタイプ
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -48,16 +43,14 @@
       type: ForeignKey
       verbose_name: 対象グループ
       is_null: true
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Group
+      relation: group.id
       index: true
     - name: description
       type: CharField
       verbose_name: イベント概要
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -65,7 +58,6 @@
       type: DateTimeField
       verbose_name: イベント開始日時
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -73,7 +65,6 @@
       type: DateTimeField
       verbose_name: イベント終了日時
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -87,7 +78,7 @@
       name: campaign_type_group_valid
       condition: '(OR: (AND: (''group__isnull'', True), (''type'', ''OFFCIAL'')),
         (AND: (''group__isnull'', False), (''type__in'', (''CLIENT'', ''GROUP''))))'
-  index: []
+  indexes: []
 - name: article
   doc:
     title: 記事
@@ -96,15 +87,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -112,7 +100,6 @@
       type: DateTimeField
       verbose_name: updated at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -120,7 +107,6 @@
       type: CharField
       verbose_name: 記事タイトル
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -129,7 +115,6 @@
       verbose_name: 記事実態の保存先パス
       help_text: 記事の内容と記事内のメディアはそこに保存される
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -137,10 +122,9 @@
       type: ForeignKey
       verbose_name: 記事の作成者
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: User
+      relation: user.id
       index: true
   constraints:
     - type: UniqueConstraint
@@ -148,7 +132,7 @@
         - user
         - title
       name: article_title_and_user_uniq
-  index: []
+  indexes: []
 - name: article_tag_relation
   doc:
     title: 記事へのタグ付け
@@ -160,15 +144,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -176,28 +157,25 @@
       type: ForeignKey
       verbose_name: タグの付与者
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: User
+      relation: user.id
       index: true
     - name: article
       type: ForeignKey
       verbose_name: article
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Article
+      relation: article.id
       index: true
     - name: tag
       type: ForeignKey
       verbose_name: tag
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Tag
+      relation: tag.id
       index: true
   constraints:
     - type: UniqueConstraint
@@ -205,7 +183,7 @@
         - article
         - tag
       name: article_and_tag_uniq
-  index: []
+  indexes: []
 - name: article_campaign_relation
   doc:
     title: 記事とキャンペーンの紐付け
@@ -214,31 +192,27 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: article
       type: ForeignKey
       verbose_name: article
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Article
+      relation: article.id
       index: true
     - name: campaign
       type: ForeignKey
       verbose_name: campaign
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Campaign
+      relation: campaign.id
       index: true
   constraints:
     - type: UniqueConstraint
       fields:
         - article
       name: article_campaign_article_uniq
-  index: []
+  indexes: []

@@ -44,10 +44,9 @@ class Command(BaseCommand):
                             "verbose_name": str(f.verbose_name) if f.verbose_name else None,
                             "help_text": f.help_text or None,
                             "is_null": f.null,
-                            "is_allow_blank": f.blank,
-                            "is_unique": f.unique,
+                            "is_unique": None if f.primary_key else f.unique,  # PKのときはユニークなので冗長なコンテキストは削除
                             "primary_key": f.primary_key,
-                            "relation": (f.remote_field.model.__name__ if f.is_relation and f.remote_field else None),
+                            "relation": self._serialize_relation(field=f),
                             "index": f.db_index,
                         }.items()
                         if v is not None
@@ -60,7 +59,7 @@ class Command(BaseCommand):
                     "doc": doc,
                     "fields": fields,
                     "constraints": [self._serialize_constraint(c) for c in meta.constraints],
-                    "index": [{"name": idx.name, "fields": list(idx.fields or [])} for idx in meta.indexes],
+                    "indexes": [{"name": idx.name, "fields": list(idx.fields or [])} for idx in meta.indexes],
                 }
             )
 
@@ -131,3 +130,17 @@ class Command(BaseCommand):
             return None
 
         return serialized_choices
+
+    def _serialize_relation(self, field: Field) -> str | None:
+        if field.get_internal_type() != "ForeignKey":
+            return None
+
+        remote_field = getattr(field, "remote_field", None)
+        remote_model = getattr(remote_field, "model", None)
+        target_field = getattr(field, "target_field", None)
+        target_column = getattr(target_field, "column", None)
+
+        if remote_model is None or target_column is None:
+            return None
+
+        return f"{remote_model._meta.db_table}.{target_column}"

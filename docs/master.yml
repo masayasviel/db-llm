@@ -11,15 +11,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: name
       type: CharField
       verbose_name: グループ名
       is_null: false
-      is_allow_blank: false
       is_unique: true
       primary_key: false
       index: false
@@ -27,17 +24,16 @@
       type: ForeignKey
       verbose_name: 親グループ
       is_null: true
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Group
+      relation: group.id
       index: true
   constraints:
     - type: UniqueConstraint
       fields:
         - name
       name: group_name_uniq
-  index: []
+  indexes: []
 - name: user
   doc:
     title: ユーザ-
@@ -46,15 +42,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -62,7 +55,6 @@
       type: CharField
       verbose_name: ユーザー名
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
@@ -70,12 +62,11 @@
       type: CharField
       verbose_name: ユーザーユニークコード
       is_null: false
-      is_allow_blank: false
       is_unique: true
       primary_key: false
       index: true
   constraints: []
-  index: []
+  indexes: []
 - name: group_user_relation
   doc:
     title: ユーザ-とグループの紐付け
@@ -85,30 +76,26 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: group
       type: ForeignKey
       verbose_name: group
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Group
+      relation: group.id
       index: true
     - name: user
       type: ForeignKey
       verbose_name: user
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: User
+      relation: user.id
       index: true
   constraints: []
-  index: []
+  indexes: []
 - name: tag
   doc:
     title: タグ
@@ -121,15 +108,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -137,16 +121,14 @@
       type: ForeignKey
       verbose_name: created by
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: User
+      relation: user.id
       index: true
     - name: name
       type: CharField
       verbose_name: タグ名
       is_null: false
-      is_allow_blank: false
       is_unique: true
       primary_key: false
       index: false
@@ -154,12 +136,11 @@
       type: BooleanField
       verbose_name: 公式タグフラグ
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
       index: false
   constraints: []
-  index: []
+  indexes: []
 - name: user_tag_relation
   doc:
     title: ユーザ-とタグの紐付け
@@ -171,15 +152,12 @@
       type: AutoField
       verbose_name: id
       is_null: false
-      is_allow_blank: true
-      is_unique: true
       primary_key: true
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
       is_null: false
-      is_allow_blank: true
       is_unique: false
       primary_key: false
       index: false
@@ -187,19 +165,17 @@
       type: ForeignKey
       verbose_name: user
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: User
+      relation: user.id
       index: true
     - name: tag
       type: ForeignKey
       verbose_name: tag
       is_null: false
-      is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: Tag
+      relation: tag.id
       index: true
   constraints:
     - type: UniqueConstraint
@@ -207,7 +183,7 @@
         - user
         - tag
       name: user_and_tag_uniq
-  index:
+  indexes:
     - name: user_tag_re_user_id_5d706d_idx
       fields:
         - user

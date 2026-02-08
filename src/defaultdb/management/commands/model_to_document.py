@@ -5,7 +5,7 @@ import yaml
 from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db.models import BaseConstraint
+from django.db.models import BaseConstraint, Field
 from docutils import nodes
 from docutils.core import publish_doctree
 
@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
     def _serialize_choices(
         self,
-        field,
+        field: Field,
     ) -> list | None:
 
         def _normalize_choices(raw_choices) -> list[dict[str, str]]:

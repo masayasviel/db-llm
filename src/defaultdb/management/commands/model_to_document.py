@@ -5,6 +5,7 @@ import yaml
 from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.models import BaseConstraint
 from docutils import nodes
 from docutils.core import publish_doctree
 
@@ -31,18 +32,25 @@ class Command(BaseCommand):
 
             fields = []
             for f in meta.fields:
+                preferred_name = self._serialize_choices(field=f)
+
                 fields.append(
                     {
-                        "name": f.name,
-                        "type": f.get_internal_type(),
-                        "verbose_name": str(f.verbose_name) if f.verbose_name else None,
-                        "help_text": f.help_text or None,
-                        "is_null": f.null,
-                        "is_allow_blank": f.blank,
-                        "is_unique": f.unique,
-                        "primary_key": f.primary_key,
-                        "relation": (f.remote_field.model.__name__ if f.is_relation and f.remote_field else None),
-                        "index": f.db_index,
+                        k: v
+                        for k, v in {
+                            "name": f.name,
+                            "type": f.get_internal_type(),
+                            "choices": preferred_name,
+                            "verbose_name": str(f.verbose_name) if f.verbose_name else None,
+                            "help_text": f.help_text or None,
+                            "is_null": f.null,
+                            "is_allow_blank": f.blank,
+                            "is_unique": f.unique,
+                            "primary_key": f.primary_key,
+                            "relation": (f.remote_field.model.__name__ if f.is_relation and f.remote_field else None),
+                            "index": f.db_index,
+                        }.items()
+                        if v is not None
                     }
                 )
 
@@ -51,14 +59,7 @@ class Command(BaseCommand):
                     "name": meta.db_table,
                     "doc": doc,
                     "fields": fields,
-                    "constraints": [
-                        {
-                            "type": c.__class__.__name__,
-                            "fields": list(getattr(c, "fields", None) or []),
-                            "name": c.name,
-                        }
-                        for c in meta.constraints
-                    ],
+                    "constraints": [self._serialize_constraint(c) for c in meta.constraints],
                     "index": [{"name": idx.name, "fields": list(idx.fields or [])} for idx in meta.indexes],
                 }
             )
@@ -89,3 +90,44 @@ class Command(BaseCommand):
                 result[key] = val
 
         return result
+
+    def _serialize_constraint(self, constraint: BaseConstraint) -> dict:
+        data = {
+            "type": constraint.__class__.__name__,
+            "fields": list(getattr(constraint, "fields", None) or []),
+            "name": constraint.name,
+        }
+
+        if (condition := getattr(constraint, "condition", None)) is not None:
+            data["condition"] = str(condition)
+
+        return data
+
+    def _serialize_choices(
+        self,
+        field,
+    ) -> list | None:
+
+        def _normalize_choices(raw_choices) -> list[dict[str, str]]:
+            normalized: list[dict[str, str]] = []
+            for choice in raw_choices:
+                if not isinstance(choice, (list, tuple)) or len(choice) != 2:
+                    continue
+
+                value, label = choice
+                if not isinstance(label, str):
+                    continue
+
+                normalized.append({"value": str(value), "label": str(label)})
+
+            return normalized
+
+        raw_choices = getattr(field, "choices", None)
+        if not raw_choices:
+            return None
+
+        serialized_choices = _normalize_choices(raw_choices)
+        if not serialized_choices:
+            return None
+
+        return serialized_choices

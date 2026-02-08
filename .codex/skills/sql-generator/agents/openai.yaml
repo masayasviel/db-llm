@@ -1,0 +1,4 @@
+interface:
+  display_name: "SQL Generator"
+  short_description: "Generate SQL from docs schema"
+  default_prompt: "Generate SQL queries based on docs/*.yml schema definitions."

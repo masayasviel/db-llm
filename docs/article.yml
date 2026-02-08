@@ -1,3 +1,93 @@
+- name: campaign
+  doc:
+    title: キャンペーン
+    context:
+      - 記事に紐づけられるイベント
+      - キャンペーンは運営のみ作成できる
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      index: false
+    - name: updated_at
+      type: DateTimeField
+      verbose_name: 更新日時
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: name
+      type: CharField
+      verbose_name: イベント名
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: type
+      type: CharField
+      choices:
+        - value: OFFCIAL
+          label: 公式
+        - value: CLIENT
+          label: 企業
+        - value: GROUP
+          label: グループ
+      verbose_name: キャンペーンタイプ
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: group
+      type: ForeignKey
+      verbose_name: 対象グループ
+      is_null: true
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Group
+      index: true
+    - name: description
+      type: CharField
+      verbose_name: イベント概要
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: start_at
+      type: DateTimeField
+      verbose_name: イベント開始日時
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: end_at
+      type: DateTimeField
+      verbose_name: イベント終了日時
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      index: false
+  constraints:
+    - type: CheckConstraint
+      fields: []
+      name: campaign_period_valid
+      condition: '(AND: (''end_at__gte'', F(start_at)))'
+    - type: CheckConstraint
+      fields: []
+      name: campaign_type_group_valid
+      condition: '(OR: (AND: (''group__isnull'', True), (''type'', ''OFFCIAL'')),
+        (AND: (''group__isnull'', False), (''type__in'', (''CLIENT'', ''GROUP''))))'
+  index: []
 - name: article
   doc:
     title: 記事
@@ -5,42 +95,34 @@
     - name: id
       type: AutoField
       verbose_name: id
-      help_text: null
       is_null: false
       is_allow_blank: true
       is_unique: true
       primary_key: true
-      relation: null
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
-      help_text: null
       is_null: false
       is_allow_blank: true
       is_unique: false
       primary_key: false
-      relation: null
       index: false
     - name: updated_at
       type: DateTimeField
       verbose_name: updated at
-      help_text: null
       is_null: false
       is_allow_blank: true
       is_unique: false
       primary_key: false
-      relation: null
       index: false
     - name: title
       type: CharField
       verbose_name: 記事タイトル
-      help_text: null
       is_null: false
       is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: null
       index: false
     - name: article_path
       type: TextField
@@ -50,12 +132,10 @@
       is_allow_blank: false
       is_unique: false
       primary_key: false
-      relation: null
       index: false
     - name: user
       type: ForeignKey
       verbose_name: 記事の作成者
-      help_text: null
       is_null: false
       is_allow_blank: false
       is_unique: false
@@ -79,27 +159,22 @@
     - name: id
       type: AutoField
       verbose_name: id
-      help_text: null
       is_null: false
       is_allow_blank: true
       is_unique: true
       primary_key: true
-      relation: null
       index: false
     - name: created_at
       type: DateTimeField
       verbose_name: created at
-      help_text: null
       is_null: false
       is_allow_blank: true
       is_unique: false
       primary_key: false
-      relation: null
       index: false
     - name: created_by
       type: ForeignKey
       verbose_name: タグの付与者
-      help_text: null
       is_null: false
       is_allow_blank: false
       is_unique: false
@@ -109,7 +184,6 @@
     - name: article
       type: ForeignKey
       verbose_name: article
-      help_text: null
       is_null: false
       is_allow_blank: false
       is_unique: false
@@ -119,7 +193,6 @@
     - name: tag
       type: ForeignKey
       verbose_name: tag
-      help_text: null
       is_null: false
       is_allow_blank: false
       is_unique: false
@@ -132,4 +205,40 @@
         - article
         - tag
       name: article_and_tag_uniq
+  index: []
+- name: article_campaign_relation
+  doc:
+    title: 記事とキャンペーンの紐付け
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      index: false
+    - name: article
+      type: ForeignKey
+      verbose_name: article
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Article
+      index: true
+    - name: campaign
+      type: ForeignKey
+      verbose_name: campaign
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Campaign
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields:
+        - article
+      name: article_campaign_article_uniq
   index: []

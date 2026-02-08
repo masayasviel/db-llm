@@ -183,8 +183,4 @@
         - user
         - tag
       name: user_and_tag_uniq
-  indexes:
-    - name: user_tag_re_user_id_5d706d_idx
-      fields:
-        - user
-        - tag
+  indexes: []

@@ -13,16 +13,16 @@ description: リポジトリ内のスキーマドキュメントを根拠にSQL�
 - ファイルに記載された `name` をテーブル名、`fields[].name` をカラム名として扱う
 - `fields[].verbose_name` は人間向けの表示名として扱い、SQL上の識別子には `fields[].name` を使う
 - `fields[].choices` は列挙値定義（`value` / `label`）として扱い、SQL上の比較・更新には原則 `value` を使う
+- `fields[].index` は単一カラムのインデックス有無、`indexes` は複数カラムを含みうるテーブル定義の明示的インデックス一覧として扱う
 - `doc.title` はテーブルの業務上の名称、`doc.description` は説明、`doc.context` は利用上の前提・ルールとして扱う
 - `constraints` には制約が記載される
 
 ## SQL作成ルール
 1. ユーザー要求から対象テーブルと必要カラムを特定する
 2. `docs/*.yml` を参照し、存在しないテーブル/カラム名は使わない
-3. JOINは `relation` に基づくキーで行う
-4. 一意制約や `is_null` を無視しない
-5. `choices` が定義されたカラムは、定義済みの許容値のみを条件・更新値に使う
-6. ユーザーが `choices` の `label` で指定した場合は、対応する `value` に読み替えてSQLを作成する
+3. 一意制約や `is_null` を無視しない
+4. `choices` が定義されたカラムは、定義済みの許容値のみを条件・更新値に使う
+5. ユーザーが `choices` の `label` で指定した場合は、対応する `value` に読み替えてSQLを作成する
 
 ## 出力フォーマット
 - SQL本体をコードブロックで提示

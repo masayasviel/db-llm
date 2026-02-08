@@ -85,7 +85,4 @@ class UserTagRelation(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["user", "tag"], name="user_and_tag_uniq"),
         ]
-        indexes = [
-            models.Index(fields=["user", "tag"]),
-        ]
         db_table = "user_tag_relation"

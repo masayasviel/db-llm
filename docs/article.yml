@@ -76,12 +76,15 @@
     - type: CheckConstraint
       fields: []
       name: campaign_type_group_valid
-      condition: '(OR: (AND: (''group__isnull'', True), (''type'', ''OFFCIAL'')),
+      condition: '(OR: (AND: (''group__isnull'', True), (''type'', ''OFFICIAL'')),
         (AND: (''group__isnull'', False), (''type__in'', (''CLIENT'', ''GROUP''))))'
   indexes: []
 - name: article
   doc:
     title: 記事
+    context:
+      - ユーザーごとの記事一覧は公開状態と更新日時で絞り込み・並び替えされる
+      - 公開中記事は公開状態と公開日時で取得される
   fields:
     - name: id
       type: AutoField
@@ -126,13 +129,56 @@
       primary_key: false
       relation: user.id
       index: true
+    - name: status
+      type: CharField
+      choices:
+        - value: DRAFT
+          label: 下書き
+        - value: PUBLISHED
+          label: 公開
+        - value: ARCHIVED
+          label: アーカイブ
+      verbose_name: 公開状態
+      is_null: false
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: published_at
+      type: DateTimeField
+      verbose_name: 公開日時
+      is_null: true
+      is_unique: false
+      primary_key: false
+      index: false
+    - name: deleted_at
+      type: DateTimeField
+      verbose_name: 削除日時
+      is_null: true
+      is_unique: false
+      primary_key: false
+      index: false
   constraints:
     - type: UniqueConstraint
       fields:
         - user
         - title
       name: article_title_and_user_uniq
-  indexes: []
+    - type: CheckConstraint
+      fields: []
+      name: article_status_datetime_valid
+      condition: '(OR: (AND: (''deleted_at__isnull'', True), (''published_at__isnull'',
+        True), (''status'', ''DRAFT'')), (AND: (''deleted_at__isnull'', True), (''published_at__isnull'',
+        False), (''status'', ''PUBLISHED'')), (AND: (''deleted_at__isnull'', False),
+        (''published_at__isnull'', False), (''status'', ''ARCHIVED'')))'
+  indexes:
+    - name: article_user_status_updated_idx
+      fields:
+        - user
+        - status
+    - name: article_status_published_idx
+      fields:
+        - status
+        - published_at
 - name: article_tag_relation
   doc:
     title: 記事へのタグ付け

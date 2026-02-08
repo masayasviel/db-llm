@@ -1,6 +1,6 @@
 from django.db import models
 
-from .constants import CAMPAIGN_TYPE
+from .constants import ARTICLE_STATUS, CAMPAIGN_TYPE
 from .master import Group, Tag, User
 
 # Create your models here.
@@ -19,7 +19,7 @@ class Campaign(models.Model):
     type = models.CharField(
         max_length=16,
         choices=CAMPAIGN_TYPE,
-        default="OFFCIAL",
+        default="OFFICIAL",
         verbose_name="キャンペーンタイプ",
     )
     group = models.ForeignKey(
@@ -39,7 +39,7 @@ class Campaign(models.Model):
                 name="campaign_period_valid",
             ),
             models.CheckConstraint(
-                condition=(models.Q(type="OFFCIAL", group__isnull=True) | models.Q(type__in=("CLIENT", "GROUP"), group__isnull=False)),
+                condition=(models.Q(type="OFFICIAL", group__isnull=True) | models.Q(type__in=("CLIENT", "GROUP"), group__isnull=False)),
                 name="campaign_type_group_valid",
             ),
         ]
@@ -49,6 +49,8 @@ class Campaign(models.Model):
 class Article(models.Model):
     """
     :title: 記事
+    :context: ユーザーごとの記事一覧は公開状態と更新日時で絞り込み・並び替えされる
+    :context: 公開中記事は公開状態と公開日時で取得される
     """
 
     id = models.AutoField(primary_key=True)
@@ -57,10 +59,23 @@ class Article(models.Model):
     title = models.CharField(max_length=256, verbose_name="記事タイトル")
     article_path = models.TextField(verbose_name="記事実態の保存先パス", help_text="記事の内容と記事内のメディアはそこに保存される")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="記事の作成者")
+    status = models.CharField(max_length=16, choices=ARTICLE_STATUS, default="DRAFT", verbose_name="公開状態")
+    published_at = models.DateTimeField(null=True, verbose_name="公開日時")
+    deleted_at = models.DateTimeField(null=True, verbose_name="削除日時")
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "title"], name="article_title_and_user_uniq"),
+            models.CheckConstraint(
+                condition=models.Q(status="DRAFT", published_at__isnull=True, deleted_at__isnull=True)
+                | models.Q(status="PUBLISHED", published_at__isnull=False, deleted_at__isnull=True)
+                | models.Q(status="ARCHIVED", published_at__isnull=False, deleted_at__isnull=False),
+                name="article_status_datetime_valid",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["user", "status"], name="article_user_status_updated_idx"),
+            models.Index(fields=["status", "published_at"], name="article_status_published_idx"),
         ]
         db_table = "article"
 

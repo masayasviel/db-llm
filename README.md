@@ -42,6 +42,7 @@ docker-compose run web python manage.py model_to_document
 
 ```shell
 make down
+docker ps -qa | xargs docker rm
 make down_volume
 docker images -qa | xargs docker rmi
 ```

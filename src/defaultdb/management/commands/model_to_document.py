@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import Path
 
 import yaml
@@ -18,7 +19,7 @@ class Command(BaseCommand):
     ALLOW_APP_LABEL = ("defaultdb",)
 
     def handle(self, *args, **options):
-        models_info = []
+        models_info: dict[str, list[dict]] = defaultdict(list)
 
         for model in apps.get_models():
             meta = model._meta
@@ -45,7 +46,7 @@ class Command(BaseCommand):
                     }
                 )
 
-            models_info.append(
+            models_info[model.__module__].append(
                 {
                     "name": meta.db_table,
                     "doc": doc,
@@ -64,10 +65,12 @@ class Command(BaseCommand):
 
         out_dir = Path(settings.BASE_DIR).parent / "docs"
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_path = out_dir / "docs.yml"
 
-        with out_path.open("w+", encoding="utf-8") as f:
-            yaml.dump(models_info, f, default_flow_style=False, allow_unicode=True, sort_keys=False, Dumper=Dumper)
+        for k, v in models_info.items():
+            module_name = k.split(".")[-1]
+            out_path = out_dir / f"{module_name}.yml"
+            with out_path.open("w+", encoding="utf-8") as f:
+                yaml.dump(v, f, default_flow_style=False, allow_unicode=True, sort_keys=False, Dumper=Dumper)
 
     def _rst_field_list_to_dict(self, rst: str) -> dict:
         doctree = publish_doctree(rst or "")

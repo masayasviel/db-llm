@@ -1,0 +1,135 @@
+- name: article
+  doc:
+    title: 記事
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: updated_at
+      type: DateTimeField
+      verbose_name: updated at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: title
+      type: CharField
+      verbose_name: 記事タイトル
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: article_path
+      type: TextField
+      verbose_name: 記事実態の保存先パス
+      help_text: 記事の内容と記事内のメディアはそこに保存される
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: user
+      type: ForeignKey
+      verbose_name: 記事の作成者
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields:
+        - user
+        - title
+      name: article_title_and_user_uniq
+  index: []
+- name: article_tag_relation
+  doc:
+    title: 記事へのタグ付け
+    context:
+      - ユーザーが記事にタグ付けできる
+      - タグを外せばレコードが削除される
+  fields:
+    - name: id
+      type: AutoField
+      verbose_name: id
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: true
+      primary_key: true
+      relation: null
+      index: false
+    - name: created_at
+      type: DateTimeField
+      verbose_name: created at
+      help_text: null
+      is_null: false
+      is_allow_blank: true
+      is_unique: false
+      primary_key: false
+      relation: null
+      index: false
+    - name: created_by
+      type: ForeignKey
+      verbose_name: タグの付与者
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: User
+      index: true
+    - name: article
+      type: ForeignKey
+      verbose_name: article
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Article
+      index: true
+    - name: tag
+      type: ForeignKey
+      verbose_name: tag
+      help_text: null
+      is_null: false
+      is_allow_blank: false
+      is_unique: false
+      primary_key: false
+      relation: Tag
+      index: true
+  constraints:
+    - type: UniqueConstraint
+      fields:
+        - article
+        - tag
+      name: article_and_tag_uniq
+  index: []

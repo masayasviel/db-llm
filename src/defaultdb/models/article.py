@@ -88,6 +88,7 @@ class ArticleTagRelation(models.Model):
 class ArticleCampaignRelation(models.Model):
     """
     :title: 記事とキャンペーンの紐付け
+    :context: 記事はキャンペーンに0または1つ紐づく
     """
 
     id = models.AutoField(primary_key=True)

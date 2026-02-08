@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     {
                         k: v
                         for k, v in {
-                            "name": f.name,
+                            "name": f.column,
                             "type": f.get_internal_type(),
                             "choices": preferred_name,
                             "verbose_name": str(f.verbose_name) if f.verbose_name else None,

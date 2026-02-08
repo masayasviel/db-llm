@@ -39,7 +39,7 @@
       is_unique: false
       primary_key: false
       index: false
-    - name: group
+    - name: group_id
       type: ForeignKey
       verbose_name: 対象グループ
       is_null: true
@@ -121,7 +121,7 @@
       is_unique: false
       primary_key: false
       index: false
-    - name: user
+    - name: user_id
       type: ForeignKey
       verbose_name: 記事の作成者
       is_null: false
@@ -199,7 +199,7 @@
       is_unique: false
       primary_key: false
       index: false
-    - name: created_by
+    - name: created_by_id
       type: ForeignKey
       verbose_name: タグの付与者
       is_null: false
@@ -207,7 +207,7 @@
       primary_key: false
       relation: user.id
       index: true
-    - name: article
+    - name: article_id
       type: ForeignKey
       verbose_name: article
       is_null: false
@@ -215,7 +215,7 @@
       primary_key: false
       relation: article.id
       index: true
-    - name: tag
+    - name: tag_id
       type: ForeignKey
       verbose_name: tag
       is_null: false
@@ -241,7 +241,7 @@
       is_null: false
       primary_key: true
       index: false
-    - name: article
+    - name: article_id
       type: ForeignKey
       verbose_name: article
       is_null: false
@@ -249,7 +249,7 @@
       primary_key: false
       relation: article.id
       index: true
-    - name: campaign
+    - name: campaign_id
       type: ForeignKey
       verbose_name: campaign
       is_null: false

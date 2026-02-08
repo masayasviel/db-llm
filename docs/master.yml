@@ -20,7 +20,7 @@
       is_unique: true
       primary_key: false
       index: false
-    - name: parent
+    - name: parent_id
       type: ForeignKey
       verbose_name: 親グループ
       is_null: true
@@ -78,7 +78,7 @@
       is_null: false
       primary_key: true
       index: false
-    - name: group
+    - name: group_id
       type: ForeignKey
       verbose_name: group
       is_null: false
@@ -86,7 +86,7 @@
       primary_key: false
       relation: group.id
       index: true
-    - name: user
+    - name: user_id
       type: ForeignKey
       verbose_name: user
       is_null: false
@@ -117,7 +117,7 @@
       is_unique: false
       primary_key: false
       index: false
-    - name: created_by
+    - name: created_by_id
       type: ForeignKey
       verbose_name: created by
       is_null: false
@@ -161,7 +161,7 @@
       is_unique: false
       primary_key: false
       index: false
-    - name: user
+    - name: user_id
       type: ForeignKey
       verbose_name: user
       is_null: false
@@ -169,7 +169,7 @@
       primary_key: false
       relation: user.id
       index: true
-    - name: tag
+    - name: tag_id
       type: ForeignKey
       verbose_name: tag
       is_null: false
